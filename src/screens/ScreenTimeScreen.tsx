@@ -1,5 +1,34 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-export default function ScreenTimeScreen({onBack}:{onBack:()=>void}){const [enabled,setEnabled]=useState(true);const [minutes,setMinutes]=useState(60);return <View><TouchableOpacity onPress={onBack} style={styles.back}><Ionicons name="arrow-back" size={20} color="#2563EB"/><Text style={styles.backText}>Subira</Text></TouchableOpacity><Text style={styles.title}>Igihe cyo gukoresha</Text><Text style={styles.subtitle}>Umubyeyi ashobora gushyiraho igihe umwana amara kuri UBUREZI.</Text><View style={styles.card}><View style={styles.row}><View style={styles.icon}><Ionicons name="time-outline" size={24} color="#2563EB"/></View><View style={{flex:1}}><Text style={styles.cardTitle}>Limit y’umunsi</Text><Text style={styles.cardText}>{enabled?`${minutes} min ku munsi`:'Nta limit yashyizweho'}</Text></View><Switch value={enabled} onValueChange={setEnabled}/></View>{enabled&&<><Text style={styles.big}>{minutes} min</Text><View style={styles.choices}>{[30,60,90,120].map(v=><TouchableOpacity key={v} onPress={()=>setMinutes(v)} style={[styles.choice,v===minutes&&styles.choiceActive]}><Text style={[styles.choiceText,v===minutes&&styles.choiceTextActive]}>{v}</Text></TouchableOpacity>)}</View></>}</View><View style={styles.notice}><Ionicons name="shield-checkmark-outline" size={22} color="#16A34A"/><Text style={styles.noticeText}>Igenamiterere ni iry’umubyeyi kandi rigamije gufasha umwana kugira igihe cyiza cyo kwiga.</Text></View></View>}
-const styles=StyleSheet.create({back:{flexDirection:'row',alignItems:'center',gap:6,marginBottom:18},backText:{color:'#2563EB',fontWeight:'700'},title:{fontSize:27,fontWeight:'800',color:'#0F172A'},subtitle:{color:'#64748B',lineHeight:20,marginTop:6},card:{backgroundColor:'#FFF',borderRadius:22,padding:18,marginTop:18,borderWidth:1,borderColor:'#E2E8F0'},row:{flexDirection:'row',alignItems:'center',gap:12},icon:{width:46,height:46,borderRadius:14,backgroundColor:'#EFF6FF',alignItems:'center',justifyContent:'center'},cardTitle:{fontWeight:'800',fontSize:16,color:'#0F172A'},cardText:{color:'#64748B',fontSize:12,marginTop:3},big:{fontSize:34,fontWeight:'900',color:'#2563EB',textAlign:'center',marginVertical:20},choices:{flexDirection:'row',gap:8},choice:{flex:1,height:42,borderRadius:12,borderWidth:1,borderColor:'#CBD5E1',alignItems:'center',justifyContent:'center'},choiceActive:{backgroundColor:'#2563EB',borderColor:'#2563EB'},choiceText:{fontWeight:'800',color:'#475569'},choiceTextActive:{color:'#FFF'},notice:{backgroundColor:'#F0FDF4',borderRadius:18,padding:15,marginTop:14,flexDirection:'row',gap:10},noticeText:{flex:1,color:'#166534',fontSize:12,lineHeight:18}});
+import { getScreenTime, saveScreenTime } from '../services/storage';
+
+export default function ScreenTimeScreen({ onBack }: { onBack: () => void }) {
+  const [enabled, setEnabled] = useState(true);
+  const [minutes, setMinutes] = useState(60);
+
+  useEffect(() => {
+    getScreenTime().then((settings) => { setEnabled(settings.enabled); setMinutes(settings.minutes); });
+  }, []);
+
+  const update = async (nextEnabled: boolean, nextMinutes = minutes) => {
+    setEnabled(nextEnabled);
+    setMinutes(nextMinutes);
+    await saveScreenTime({ enabled: nextEnabled, minutes: nextMinutes });
+  };
+
+  return (
+    <View>
+      <TouchableOpacity onPress={onBack} style={styles.back} activeOpacity={0.8}><Ionicons name="arrow-back" size={20} color="#2563EB" /><Text style={styles.backText}>Subira</Text></TouchableOpacity>
+      <Text style={styles.title}>Igihe cyo gukoresha</Text>
+      <Text style={styles.subtitle}>Umubyeyi ashobora gushyiraho igihe umwana amara kuri UBUREZI.</Text>
+      <View style={styles.card}>
+        <View style={styles.row}><View style={styles.icon}><Ionicons name="time-outline" size={24} color="#2563EB" /></View><View style={{ flex: 1 }}><Text style={styles.cardTitle}>Limit y’umunsi</Text><Text style={styles.cardText}>{enabled ? `${minutes} min ku munsi` : 'Nta limit yashyizweho'}</Text></View><Switch value={enabled} onValueChange={(value) => void update(value)} /></View>
+        {enabled && <><Text style={styles.big}>{minutes} min</Text><View style={styles.choices}>{[30, 60, 90, 120].map((value) => <TouchableOpacity key={value} onPress={() => void update(true, value)} style={[styles.choice, value === minutes && styles.choiceActive]} activeOpacity={0.85}><Text style={[styles.choiceText, value === minutes && styles.choiceTextActive]}>{value} min</Text></TouchableOpacity>)}</View></>}
+      </View>
+      <View style={styles.notice}><Ionicons name="shield-checkmark-outline" size={22} color="#16A34A" /><Text style={styles.noticeText}>Igenamiterere ribikwa kuri telefoni kandi rigenewe gufasha umwana gukoresha igihe cye neza.</Text></View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({ back: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 18 }, backText: { color: '#2563EB', fontWeight: '700' }, title: { fontSize: 27, fontWeight: '800', color: '#0F172A' }, subtitle: { color: '#64748B', lineHeight: 20, marginTop: 6 }, card: { backgroundColor: '#FFF', borderRadius: 22, padding: 18, marginTop: 18, borderWidth: 1, borderColor: '#E2E8F0' }, row: { flexDirection: 'row', alignItems: 'center', gap: 12 }, icon: { width: 46, height: 46, borderRadius: 14, backgroundColor: '#EFF6FF', alignItems: 'center', justifyContent: 'center' }, cardTitle: { fontWeight: '800', fontSize: 16, color: '#0F172A' }, cardText: { color: '#64748B', fontSize: 12, marginTop: 3 }, big: { fontSize: 34, fontWeight: '900', color: '#2563EB', textAlign: 'center', marginVertical: 20 }, choices: { flexDirection: 'row', gap: 8 }, choice: { flex: 1, minHeight: 42, borderRadius: 12, borderWidth: 1, borderColor: '#CBD5E1', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 4 }, choiceActive: { backgroundColor: '#2563EB', borderColor: '#2563EB' }, choiceText: { fontWeight: '800', color: '#475569', fontSize: 11 }, choiceTextActive: { color: '#FFF' }, notice: { backgroundColor: '#F0FDF4', borderRadius: 18, padding: 15, marginTop: 14, flexDirection: 'row', gap: 10 }, noticeText: { flex: 1, color: '#166534', fontSize: 12, lineHeight: 18 } });
