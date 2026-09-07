@@ -1,55 +1,11 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { isSupabaseConfigured, supabase } from './supabase';
 import type { LearningProgress } from '../types/models';
-
-export type QuizAttempt = {
-  id: string;
-  childId: string;
-  lessonId: string;
-  score: number;
-  total: number;
-  completedAt: string;
-};
-
-const PROGRESS_KEY = '@uburezi/progress';
-const QUIZ_KEY = '@uburezi/quiz-attempts';
-
-async function readProgress(): Promise<LearningProgress[]> {
-  const raw = await AsyncStorage.getItem(PROGRESS_KEY);
-  return raw ? JSON.parse(raw) as LearningProgress[] : [];
-}
-
-export async function getProgress(childId?: string): Promise<LearningProgress[]> {
-  const local = await readProgress();
-  const filtered = childId ? local.filter((item) => item.childId === childId) : local;
-  if (!isSupabaseConfigured || !supabase || !childId) return filtered;
-  const { data } = await supabase.from('learning_progress').select('child_id, lesson_id, progress, completed, updated_at').eq('child_id', childId);
-  if (!data) return filtered;
-  return data.map((item) => ({ childId: item.child_id, lessonId: item.lesson_id, progress: item.progress, completed: item.completed, updatedAt: item.updated_at }));
-}
-
-export async function saveProgress(progress: LearningProgress): Promise<void> {
-  const all = await readProgress();
-  const next = [...all.filter((item) => !(item.childId === progress.childId && item.lessonId === progress.lessonId)), progress];
-  await AsyncStorage.setItem(PROGRESS_KEY, JSON.stringify(next));
-  if (isSupabaseConfigured && supabase && !progress.childId.startsWith('local-')) {
-    const { error } = await supabase.from('learning_progress').upsert({ child_id: progress.childId, lesson_id: progress.lessonId, progress: progress.progress, completed: progress.completed, updated_at: progress.updatedAt }, { onConflict: 'child_id,lesson_id' });
-    if (error) throw error;
-  }
-}
-
-export async function completeLesson(childId: string, lessonId: string): Promise<void> {
-  await saveProgress({ childId, lessonId, progress: 100, completed: true, updatedAt: new Date().toISOString() });
-}
-
-export async function saveQuizAttempt(attempt: QuizAttempt): Promise<void> {
-  const raw = await AsyncStorage.getItem(QUIZ_KEY);
-  const all = raw ? JSON.parse(raw) as QuizAttempt[] : [];
-  await AsyncStorage.setItem(QUIZ_KEY, JSON.stringify([attempt, ...all.filter((item) => item.id !== attempt.id)]));
-}
-
-export async function getQuizAttempts(childId?: string): Promise<QuizAttempt[]> {
-  const raw = await AsyncStorage.getItem(QUIZ_KEY);
-  const all = raw ? JSON.parse(raw) as QuizAttempt[] : [];
-  return childId ? all.filter((item) => item.childId === childId) : all;
-}
+export type QuizAttempt={id:string;childId:string;lessonId:string;score:number;total:number;completedAt:string};
+const PROGRESS_KEY='@uburezi/progress';const QUIZ_KEY='@uburezi/quiz-attempts';
+async function readProgress():Promise<LearningProgress[]>{const raw=await AsyncStorage.getItem(PROGRESS_KEY);return raw?JSON.parse(raw) as LearningProgress[]:[];}
+export async function getProgress(childId?:string):Promise<LearningProgress[]>{const local=await readProgress();const filtered=childId?local.filter(item=>item.childId===childId):local;if(!isSupabaseConfigured||!supabase||!childId)return filtered;const{data,error}=await supabase.from('learning_progress').select('child_id,lesson_id,progress,completed,updated_at').eq('child_id',childId);if(error||!data)return filtered;const remote=data.map(item=>({childId:item.child_id,lessonId:item.lesson_id,progress:item.progress,completed:item.completed,updatedAt:item.updated_at}));const merged=[...filtered];remote.forEach(item=>{const index=merged.findIndex(x=>x.lessonId===item.lessonId&&x.childId===item.childId);if(index>=0)merged[index]=item;else merged.push(item);});return merged;}
+export async function saveProgress(progress:LearningProgress):Promise<void>{const all=await readProgress();const next=[...all.filter(item=>!(item.childId===progress.childId&&item.lessonId===progress.lessonId)),progress];await AsyncStorage.setItem(PROGRESS_KEY,JSON.stringify(next));if(isSupabaseConfigured&&supabase&&!progress.childId.startsWith('local-')){const{error}=await supabase.from('learning_progress').upsert({child_id:progress.childId,lesson_id:progress.lessonId,progress:progress.progress,completed:progress.completed,updated_at:progress.updatedAt},{onConflict:'child_id,lesson_id'});if(error)throw error;}}
+export async function completeLesson(childId:string,lessonId:string){await saveProgress({childId,lessonId,progress:100,completed:true,updatedAt:new Date().toISOString()});}
+export async function saveQuizAttempt(attempt:QuizAttempt):Promise<void>{const raw=await AsyncStorage.getItem(QUIZ_KEY);const all=raw?JSON.parse(raw) as QuizAttempt[]:[];await AsyncStorage.setItem(QUIZ_KEY,JSON.stringify([attempt,...all.filter(item=>item.id!==attempt.id)]));if(isSupabaseConfigured&&supabase&&!attempt.childId.startsWith('local-')){const{error}=await supabase.from('quiz_attempts').insert({child_id:attempt.childId,lesson_id:attempt.lessonId,score:attempt.score,total:attempt.total,completed_at:attempt.completedAt});if(error)throw error;}}
+export async function getQuizAttempts(childId?:string):Promise<QuizAttempt[]>{const raw=await AsyncStorage.getItem(QUIZ_KEY);const local=raw?JSON.parse(raw) as QuizAttempt[]:[];const filtered=childId?local.filter(item=>item.childId===childId):local;if(!isSupabaseConfigured||!supabase||!childId)return filtered;const{data}=await supabase.from('quiz_attempts').select('id,child_id,lesson_id,score,total,completed_at').eq('child_id',childId).order('completed_at',{ascending:false});if(!data)return filtered;return data.map(item=>({id:item.id,childId:item.child_id,lessonId:item.lesson_id,score:item.score,total:item.total,completedAt:item.completed_at}));}
