@@ -13,23 +13,27 @@ export default function ChildProfileScreen({ parentId, onBack, onSelect }: { par
   const [name, setName] = useState('');
   const [birthYear, setBirthYear] = useState('');
   const [level, setLevel] = useState<LearningLevel>('kids');
-  useEffect(() => { getChildren().then((all) => setChildren(all.filter((c) => c.parentId === parentId))); }, [parentId]);
+
+  useEffect(() => { void getChildren().then((all) => setChildren(all.filter((child) => child.parentId === parentId))); }, [parentId]);
 
   const addChild = async () => {
     const year = Number(birthYear);
     const currentYear = new Date().getFullYear();
-    if (!name.trim()) return Alert.alert('Izina rirakenewe', 'Andika izina rikoreshwa muri app.');
-    if (!year || year < currentYear - 15 || year > currentYear) return Alert.alert('Umwaka utari wo', 'Shyiramo umwaka w’amavuko w’umwana uri hagati y’imyaka 1–15.');
+    if (!name.trim()) { Alert.alert('Izina rirakenewe', 'Andika izina rikoreshwa muri app.'); return; }
+    if (!Number.isInteger(year) || year < currentYear - 16 || year > currentYear) { Alert.alert('Umwaka utari wo', `Shyiramo umwaka w’amavuko uri hagati ya ${currentYear - 16} na ${currentYear}.`); return; }
     const child: ChildProfile = { id: `child_${Date.now()}`, parentId, name: name.trim(), birthYear: year, level, avatar: 'person-circle-outline', createdAt: new Date().toISOString() };
-    const all = await getChildren(); await saveChildren([...all, child]); setChildren((current) => [...current, child]); setName(''); setBirthYear('');
+    const all = await getChildren();
+    await saveChildren([...all, child]);
+    setChildren((current) => [...current, child]);
+    setName(''); setBirthYear('');
     Alert.alert('Byakunze', `${child.name} yongewe muri konti y’umubyeyi.`);
   };
 
   return <View style={styles.wrap}>
-    <TouchableOpacity onPress={onBack} style={styles.back}><Ionicons name="arrow-back" size={22} color="#0F172A" /><Text>Subira</Text></TouchableOpacity>
+    <TouchableOpacity onPress={onBack} style={styles.back} activeOpacity={0.8}><Ionicons name="arrow-back" size={22} color="#0F172A" /><Text>Subira</Text></TouchableOpacity>
     <Text style={styles.title}>Abana banjye</Text><Text style={styles.subtitle}>Kora profile y’umwana utabitse amakuru menshi adakenewe.</Text>
-    {children.map((child) => <TouchableOpacity key={child.id} style={styles.child} onPress={() => onSelect?.(child)}><View style={styles.avatar}><Ionicons name="person" size={23} color="#2563EB" /></View><View style={{ flex: 1 }}><Text style={styles.childName}>{child.name}</Text><Text style={styles.childMeta}>Urwego: {levels.find((x) => x.id === child.level)?.label} • {child.birthYear}</Text></View><Ionicons name="chevron-forward" size={20} color="#94A3B8" /></TouchableOpacity>)}
-    <View style={styles.form}><Text style={styles.formTitle}>Ongeramo umwana</Text><TextInput value={name} onChangeText={setName} placeholder="Izina" style={styles.input} /><TextInput value={birthYear} onChangeText={setBirthYear} placeholder="Umwaka w’amavuko (urugero: 2015)" keyboardType="number-pad" style={styles.input} /><Text style={styles.label}>Urwego rw’imyaka</Text><View style={styles.levels}>{levels.map((item) => <TouchableOpacity key={item.id} onPress={() => setLevel(item.id)} style={[styles.level, level === item.id && styles.levelActive]}><Text style={[styles.levelText, level === item.id && styles.levelTextActive]}>{item.label}</Text></TouchableOpacity>)}</View><TouchableOpacity style={styles.button} onPress={addChild}><Ionicons name="add" size={21} color="#FFF" /><Text style={styles.buttonText}>Ongeramo profile</Text></TouchableOpacity></View>
+    {children.map((child) => <TouchableOpacity key={child.id} style={styles.child} onPress={() => onSelect?.(child)} activeOpacity={0.85}><View style={styles.avatar}><Ionicons name="person" size={23} color="#2563EB" /></View><View style={{ flex: 1 }}><Text style={styles.childName}>{child.name}</Text><Text style={styles.childMeta}>Urwego: {levels.find((item) => item.id === child.level)?.label} • {child.birthYear}</Text></View><Ionicons name="chevron-forward" size={20} color="#94A3B8" /></TouchableOpacity>)}
+    <View style={styles.form}><Text style={styles.formTitle}>Ongeramo umwana</Text><TextInput value={name} onChangeText={setName} placeholder="Izina" autoCapitalize="words" style={styles.input} /><TextInput value={birthYear} onChangeText={setBirthYear} placeholder="Umwaka w’amavuko (urugero: 2015)" keyboardType="number-pad" style={styles.input} /><Text style={styles.label}>Urwego rw’imyaka</Text><View style={styles.levels}>{levels.map((item) => <TouchableOpacity key={item.id} onPress={() => setLevel(item.id)} style={[styles.level, level === item.id && styles.levelActive]} activeOpacity={0.85}><Text style={[styles.levelText, level === item.id && styles.levelTextActive]}>{item.label}</Text></TouchableOpacity>)}</View><TouchableOpacity style={styles.button} onPress={() => void addChild()} activeOpacity={0.85}><Ionicons name="add" size={21} color="#FFF" /><Text style={styles.buttonText}>Ongeramo profile</Text></TouchableOpacity></View>
   </View>;
 }
 
