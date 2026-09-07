@@ -1,74 +1,14 @@
-export type LessonStep = {
-  title: string;
-  text: string;
-  icon: 'calculator-outline' | 'leaf-outline' | 'laptop-outline' | 'book-outline';
-};
-
-export type Lesson = {
-  id: string;
-  title: string;
-  subject: string;
-  duration: string;
-  icon: LessonStep['icon'];
-  summary: string;
-  steps: LessonStep[];
-};
-
-export const lessons: Lesson[] = [
-  {
-    id: 'math-counting-1',
-    title: 'Kwibara no kubara',
-    subject: 'Imibare',
-    duration: '15 min',
-    icon: 'calculator-outline',
-    summary: 'Menya imibare y’ibanze kandi witoze kubara neza.',
-    steps: [
-      { title: 'Menya imibare', text: 'Tangira umenye imibare kuva kuri 1 kugeza kuri 10.', icon: 'calculator-outline' },
-      { title: 'Gereranya', text: 'Reba umubare munini n’umuto ukoresheje ingero zoroshye.', icon: 'calculator-outline' },
-      { title: 'Imyitozo', text: 'Kora imyitozo mike kugira ngo ushimangire ibyo wize.', icon: 'calculator-outline' },
-    ],
-  },
-  {
-    id: 'science-plants-1',
-    title: 'Ibimera n’ubuzima',
-    subject: 'Siyansi',
-    duration: '18 min',
-    icon: 'leaf-outline',
-    summary: 'Sobanukirwa ibyo ibimera bikenera kugira ngo bikure neza.',
-    steps: [
-      { title: 'Ibice by’igiterwa', text: 'Menya umuzi, uruti, amababi n’indabo.', icon: 'leaf-outline' },
-      { title: 'Ibyo ibimera bikenera', text: 'Wige akamaro k’amazi, urumuri n’ubutaka ku bimera.', icon: 'leaf-outline' },
-      { title: 'Reba hafi yawe', text: 'Shaka igiterwa hafi yawe maze umenye ibice byacyo.', icon: 'leaf-outline' },
-    ],
-  },
-  {
-    id: 'technology-computer-1',
-    title: 'Muri mudasobwa ni iki?',
-    subject: 'Ikoranabuhanga',
-    duration: '15 min',
-    icon: 'laptop-outline',
-    summary: 'Menya ibice by’ibanze bya mudasobwa n’icyo buri kimwe gikora.',
-    steps: [
-      { title: 'Monitor', text: 'Monitor yerekana amakuru n’amashusho kuri mudasobwa.', icon: 'laptop-outline' },
-      { title: 'Keyboard', text: 'Keyboard ikoreshwa mu kwandika no gutanga amabwiriza.', icon: 'laptop-outline' },
-      { title: 'Mouse', text: 'Mouse igufasha guhitamo ibintu no gukoresha porogaramu.', icon: 'laptop-outline' },
-    ],
-  },
-  {
-    id: 'languages-reading-1',
-    title: 'Gusoma no kumva',
-    subject: 'Indimi',
-    duration: '20 min',
-    icon: 'book-outline',
-    summary: 'Witoze gusoma interuro ngufi no kumva igitekerezo nyamukuru.',
-    steps: [
-      { title: 'Soma buhoro', text: 'Soma interuro ngufi wita ku magambo yose.', icon: 'book-outline' },
-      { title: 'Sobanura', text: 'Gerageza kuvuga mu magambo yawe icyo wasomye.', icon: 'book-outline' },
-      { title: 'Imyitozo', text: 'Subiza ikibazo gito ku byo wasomye.', icon: 'book-outline' },
-    ],
-  },
+import type { Ionicons } from '@expo/vector-icons';
+export type LessonStep={title:string;text:string;icon:React.ComponentProps<typeof Ionicons>['name']};
+export type Lesson={id:string;title:string;subject:string;duration:string;icon:React.ComponentProps<typeof Ionicons>['name'];summary:string;steps:LessonStep[]};
+export const lessons:Lesson[]=[
+{id:'math-counting-1',title:'Kwitoza kubara',subject:'Imibare',duration:'15 min',icon:'calculator-outline',summary:'Wiga kubara no gukoresha imibare mu buryo bworoshye.',steps:[{title:'Tangira ku mibare',text:'Imibare itangira kuri 1, 2, 3, 4, 5. Gerageza kuyivuga uko ikurikirana.',icon:'numbers-outline'},{title:'Ongeraho',text:'Iyo dufite 2 hanyuma tukongeraho 3, tubona 5.',icon:'add-circle-outline'},{title:'Gerageza wenyine',text:'Tekereza ku mibare y’ibintu ubona hafi yawe, hanyuma uyibarire hamwe.',icon:'bulb-outline'}]},
+{id:'math-addition-2',title:'Kwiga guteranya',subject:'Imibare',duration:'18 min',icon:'calculator-outline',summary:'Menya uko guteranya imibare bifasha gukemura ibibazo bya buri munsi.',steps:[{title:'Tera hamwe',text:'Guteranya ni ugushyira imibare hamwe. Urugero: 4 + 2 bingana na 6.',icon:'add-circle-outline'},{title:'Koresha ibintu',text:'Koresha ibintu bifatika kugira ngo ubone igisubizo.',icon:'calculator-outline'},{title:'Sobanura igisubizo',text:'Vuga uko wageze ku gisubizo kugira ngo wumve neza uburyo wakoresheje.',icon:'bulb-outline'}]},
+{id:'science-plants-1',title:'Ibimera n’ubuzima',subject:'Siyansi',duration:'18 min',icon:'leaf-outline',summary:'Menya icyo ibimera bikenera kugira ngo bikure neza.',steps:[{title:'Ibimera ni ibinyabuzima',text:'Ibimera bikura kandi bigahinduka. Bikenera amazi, urumuri n’ubutaka bukwiye.',icon:'leaf-outline'},{title:'Amazi',text:'Amazi afasha ibimera gukomeza kubaho no gukura.',icon:'water-outline'},{title:'Urumuri',text:'Ibimera byinshi bikenera urumuri kugira ngo bikore ibiryo byabyo.',icon:'sunny-outline'}]},
+{id:'science-water-2',title:'Amazi n’imiterere yayo',subject:'Siyansi',duration:'15 min',icon:'water-outline',summary:'Menya amazi n’uko ashobora guhindura imiterere.',steps:[{title:'Amazi',text:'Amazi ni ingenzi ku buzima kandi tuyasanga ahantu henshi.',icon:'water-outline'},{title:'Gushyushya',text:'Iyo amazi ashyushye cyane ashobora guhinduka umwuka.',icon:'sunny-outline'},{title:'Gukonjesha',text:'Iyo amazi akonje cyane ashobora gukomera akaba urubura.',icon:'bulb-outline'}]},
+{id:'ict-computer-1',title:'Muri internet ni iki?',subject:'Ikoranabuhanga',duration:'15 min',icon:'laptop-outline',summary:'Menya igitekerezo cy’ibanze cy’uko internet idufasha guhanahana amakuru.',steps:[{title:'Internet ni urusobe',text:'Internet ni urusobe runini rw’ibikoresho bihujwe kugira ngo bishobore guhanahana amakuru.',icon:'globe-outline'},{title:'Browser',text:'Browser ikoreshwa mu gusura imbuga no kureba amakuru yo kuri internet.',icon:'search-outline'},{title:'Umutekano',text:'Ntugasangize abandi ijambo ry’ibanga cyangwa amakuru y’ibanga.',icon:'shield-checkmark-outline'}]},
+{id:'ict-digital-safety-2',title:'Umutekano kuri internet',subject:'Ikoranabuhanga',duration:'17 min',icon:'shield-checkmark-outline',summary:'Wiga imyitwarire myiza n’umutekano igihe ukoresha internet.',steps:[{title:'Ijambo ry’ibanga',text:'Koresha ijambo ry’ibanga rikomeye kandi nturihere abandi.',icon:'lock-closed-outline'},{title:'Amakuru bwite',text:'Irinde gutanga amakuru bwite ku bantu utazi.',icon:'shield-checkmark-outline'},{title:'Saba ubufasha',text:'Niba hari ikintu kiguteza impungenge, vugana n’umubyeyi cyangwa umwarimu wizewe.',icon:'chatbubble-ellipses-outline'}]},
+{id:'languages-reading-1',title:'Gusoma neza',subject:'Indimi',duration:'20 min',icon:'language-outline',summary:'Witoza gusoma interuro ngufi no kumva icyo zivuga.',steps:[{title:'Tegura amagambo',text:'Soma ijambo rimwe rimwe, wumve uko inyuguti n’amajwi bihuzwa.',icon:'text-outline'},{title:'Soma interuro',text:'Soma buhoro interuro, ukurikize utumenyetso tw’inyandiko.',icon:'book-outline'},{title:'Sobanura',text:'Nyuma yo gusoma, gerageza kuvuga mu magambo yawe icyo wasomye.',icon:'chatbubble-ellipses-outline'}]},
+{id:'languages-vocabulary-2',title:'Amagambo mashya',subject:'Indimi',duration:'16 min',icon:'language-outline',summary:'Wagura amagambo uzi kandi witoze kuyakoresha mu nteruro.',steps:[{title:'Menya ijambo',text:'Hitamo ijambo rishya, umenye uko ryandikwa n’icyo risobanura.',icon:'book-outline'},{title:'Rikoreshe',text:'Kora interuro ngufi ukoresheje iryo jambo.',icon:'chatbubble-ellipses-outline'},{title:'Subiramo',text:'Subiramo amagambo mashya kandi uyakoreshe mu biganiro bisanzwe.',icon:'bulb-outline'}]},
 ];
-
-export function getLesson(id: string) {
-  return lessons.find((lesson) => lesson.id === id) ?? lessons[0];
-}
+export function getLesson(id:string):Lesson{return lessons.find(lesson=>lesson.id===id)??lessons[0]}

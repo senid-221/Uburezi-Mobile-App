@@ -1,50 +1,13 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-
-export type LearningLevel = 'early' | 'young' | 'kids' | 'teens';
-
-const levels = [
-  { id: 'early' as const, title: 'Imyaka 1–3', subtitle: 'Kwiga binyuze mu mukino', icon: 'happy-outline' as const },
-  { id: 'young' as const, title: 'Imyaka 4–6', subtitle: 'Ibanze n’ubumenyi', icon: 'school-outline' as const },
-  { id: 'kids' as const, title: 'Imyaka 7–10', subtitle: 'Amasomo n’imyitozo', icon: 'book-outline' as const },
-  { id: 'teens' as const, title: 'Imyaka 11–15', subtitle: 'Ubumenyi bwimbitse', icon: 'bulb-outline' as const },
+import SuperIcon from '../components/SuperIcon';
+import { colors, radius, shadow } from '../theme';
+export type LearningLevel = 'early'|'young'|'kids'|'teens';
+const levels=[
+ {id:'early' as const,title:'Imyaka 1–3',subtitle:'Kwiga binyuze mu mukino',icon:'happy-outline',accent:colors.coral,tint:colors.coralSoft},
+ {id:'young' as const,title:'Imyaka 4–6',subtitle:'Ibanze n’ubumenyi',icon:'school-outline',accent:colors.warning,tint:colors.warningSoft},
+ {id:'kids' as const,title:'Imyaka 7–10',subtitle:'Amasomo n’imyitozo',icon:'book-outline',accent:colors.primary,tint:colors.primarySoft},
+ {id:'teens' as const,title:'Imyaka 11–15',subtitle:'Ubumenyi bwimbitse',icon:'bulb-outline',accent:colors.purple,tint:colors.purpleSoft},
 ];
-
-export default function AgeSelectionScreen({ selected, onSelect, onContinue }: { selected: LearningLevel; onSelect: (level: LearningLevel) => void; onContinue: () => void }) {
-  return (
-    <View>
-      <Text style={styles.title}>Hitamo urwego</Text>
-      <Text style={styles.subtitle}>Porogaramu izaguha amasomo ajyanye n’imyaka.</Text>
-      <View style={styles.grid}>
-        {levels.map((level) => {
-          const active = selected === level.id;
-          return (
-            <TouchableOpacity key={level.id} onPress={() => onSelect(level.id)} style={[styles.card, active && styles.active]} activeOpacity={0.85}>
-              <View style={[styles.icon, active && styles.activeIcon]}><Ionicons name={level.icon} size={25} color={active ? '#FFF' : '#2563EB'} /></View>
-              <Text style={styles.cardTitle}>{level.title}</Text>
-              <Text style={styles.cardText}>{level.subtitle}</Text>
-            </TouchableOpacity>
-          );
-        })}
-      </View>
-      <TouchableOpacity style={styles.button} onPress={onContinue} activeOpacity={0.85}>
-        <Text style={styles.buttonText}>Komeza</Text><Ionicons name="arrow-forward" size={20} color="#FFF" />
-      </TouchableOpacity>
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  title: { fontSize: 25, fontWeight: '800', color: '#0F172A', marginBottom: 6 },
-  subtitle: { color: '#64748B', fontSize: 14, lineHeight: 21, marginBottom: 18 },
-  grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
-  card: { width: '48%', minHeight: 135, backgroundColor: '#FFF', borderRadius: 18, padding: 15, borderWidth: 1, borderColor: '#E2E8F0' },
-  active: { backgroundColor: '#EFF6FF', borderColor: '#60A5FA' },
-  icon: { width: 44, height: 44, borderRadius: 14, backgroundColor: '#EFF6FF', alignItems: 'center', justifyContent: 'center', marginBottom: 11 },
-  activeIcon: { backgroundColor: '#2563EB' },
-  cardTitle: { fontSize: 15, fontWeight: '800', color: '#0F172A' },
-  cardText: { fontSize: 12, lineHeight: 17, color: '#64748B', marginTop: 4 },
-  button: { height: 54, borderRadius: 17, backgroundColor: '#0F172A', marginTop: 22, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 9 },
-  buttonText: { color: '#FFF', fontSize: 16, fontWeight: '800' },
-});
+export default function AgeSelectionScreen({selected,onSelect,onContinue}:{selected:LearningLevel;onSelect:(level:LearningLevel)=>void;onContinue:()=>void}){return <View><TouchableOpacity onPress={onContinue} style={styles.back}><SuperIcon name="arrow-back" size={19} color={colors.primary}/><Text style={styles.backText}>Subira</Text></TouchableOpacity><Text style={styles.kicker}>PERSONALISATION</Text><Text style={styles.title}>Hitamo urwego</Text><Text style={styles.subtitle}>Tugena amasomo n’imyitozo bijyanye n’imyaka watoranyije.</Text><View style={styles.grid}>{levels.map(level=>{const active=selected===level.id;return <TouchableOpacity key={level.id} onPress={()=>onSelect(level.id)} style={[styles.card,active&&{borderColor:level.accent,backgroundColor:level.tint}]} activeOpacity={0.86}><View style={[styles.icon,{backgroundColor:active?level.accent:level.tint}]}><SuperIcon name={level.icon} size={24} color={active?'#FFF':level.accent}/></View><Text style={styles.cardTitle}>{level.title}</Text><Text style={styles.cardText}>{level.subtitle}</Text>{active&&<View style={[styles.check,{backgroundColor:level.accent}]}><SuperIcon name="check" size={11} color="#FFF"/></View>}</TouchableOpacity>})}</View><TouchableOpacity style={styles.button} onPress={onContinue} activeOpacity={0.86}><Text style={styles.buttonText}>Komeza</Text><SuperIcon name="arrow-forward" size={19} color="#FFF"/></TouchableOpacity></View>}
+const styles=StyleSheet.create({back:{flexDirection:'row',alignItems:'center',gap:6,marginBottom:25},backText:{color:colors.primary,fontWeight:'800'},kicker:{fontSize:9,color:colors.primary,fontWeight:'900',letterSpacing:1.3},title:{fontSize:29,fontWeight:'900',color:colors.ink,marginTop:4},subtitle:{color:colors.muted,fontSize:12.5,lineHeight:19,marginTop:6,marginBottom:19},grid:{flexDirection:'row',flexWrap:'wrap',gap:10},card:{width:'48.4%',minHeight:145,backgroundColor:colors.surface,borderRadius:20,padding:14,borderWidth:1,borderColor:colors.border,position:'relative',...shadow.card},icon:{width:46,height:46,borderRadius:15,alignItems:'center',justifyContent:'center',marginBottom:11},cardTitle:{fontSize:14,fontWeight:'900',color:colors.ink},cardText:{fontSize:10.5,lineHeight:15,color:colors.muted,marginTop:4},check:{position:'absolute',right:12,top:12,width:20,height:20,borderRadius:10,alignItems:'center',justifyContent:'center'},button:{height:55,borderRadius:17,backgroundColor:colors.primary,marginTop:22,flexDirection:'row',alignItems:'center',justifyContent:'center',gap:9},buttonText:{color:'#FFF',fontSize:15,fontWeight:'900'}});
