@@ -1,34 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import SuperIcon from '../components/SuperIcon';
 import { getScreenTime, saveScreenTime } from '../services/storage';
-
-export default function ScreenTimeScreen({ onBack }: { onBack: () => void }) {
-  const [enabled, setEnabled] = useState(true);
-  const [minutes, setMinutes] = useState(60);
-
-  useEffect(() => {
-    getScreenTime().then((settings) => { setEnabled(settings.enabled); setMinutes(settings.minutes); });
-  }, []);
-
-  const update = async (nextEnabled: boolean, nextMinutes = minutes) => {
-    setEnabled(nextEnabled);
-    setMinutes(nextMinutes);
-    await saveScreenTime({ enabled: nextEnabled, minutes: nextMinutes });
-  };
-
-  return (
-    <View>
-      <TouchableOpacity onPress={onBack} style={styles.back} activeOpacity={0.8}><Ionicons name="arrow-back" size={20} color="#2563EB" /><Text style={styles.backText}>Subira</Text></TouchableOpacity>
-      <Text style={styles.title}>Igihe cyo gukoresha</Text>
-      <Text style={styles.subtitle}>Umubyeyi ashobora gushyiraho igihe umwana amara kuri UBUREZI.</Text>
-      <View style={styles.card}>
-        <View style={styles.row}><View style={styles.icon}><Ionicons name="time-outline" size={24} color="#2563EB" /></View><View style={{ flex: 1 }}><Text style={styles.cardTitle}>Limit y’umunsi</Text><Text style={styles.cardText}>{enabled ? `${minutes} min ku munsi` : 'Nta limit yashyizweho'}</Text></View><Switch value={enabled} onValueChange={(value) => void update(value)} /></View>
-        {enabled && <><Text style={styles.big}>{minutes} min</Text><View style={styles.choices}>{[30, 60, 90, 120].map((value) => <TouchableOpacity key={value} onPress={() => void update(true, value)} style={[styles.choice, value === minutes && styles.choiceActive]} activeOpacity={0.85}><Text style={[styles.choiceText, value === minutes && styles.choiceTextActive]}>{value} min</Text></TouchableOpacity>)}</View></>}
-      </View>
-      <View style={styles.notice}><Ionicons name="shield-checkmark-outline" size={22} color="#16A34A" /><Text style={styles.noticeText}>Igenamiterere ribikwa kuri telefoni kandi rigenewe gufasha umwana gukoresha igihe cye neza.</Text></View>
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({ back: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 18 }, backText: { color: '#2563EB', fontWeight: '700' }, title: { fontSize: 27, fontWeight: '800', color: '#0F172A' }, subtitle: { color: '#64748B', lineHeight: 20, marginTop: 6 }, card: { backgroundColor: '#FFF', borderRadius: 22, padding: 18, marginTop: 18, borderWidth: 1, borderColor: '#E2E8F0' }, row: { flexDirection: 'row', alignItems: 'center', gap: 12 }, icon: { width: 46, height: 46, borderRadius: 14, backgroundColor: '#EFF6FF', alignItems: 'center', justifyContent: 'center' }, cardTitle: { fontWeight: '800', fontSize: 16, color: '#0F172A' }, cardText: { color: '#64748B', fontSize: 12, marginTop: 3 }, big: { fontSize: 34, fontWeight: '900', color: '#2563EB', textAlign: 'center', marginVertical: 20 }, choices: { flexDirection: 'row', gap: 8 }, choice: { flex: 1, minHeight: 42, borderRadius: 12, borderWidth: 1, borderColor: '#CBD5E1', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 4 }, choiceActive: { backgroundColor: '#2563EB', borderColor: '#2563EB' }, choiceText: { fontWeight: '800', color: '#475569', fontSize: 11 }, choiceTextActive: { color: '#FFF' }, notice: { backgroundColor: '#F0FDF4', borderRadius: 18, padding: 15, marginTop: 14, flexDirection: 'row', gap: 10 }, noticeText: { flex: 1, color: '#166534', fontSize: 12, lineHeight: 18 } });
+import { colors, radius, shadow } from '../theme';
+export default function ScreenTimeScreen({onBack}:{onBack:()=>void}){const[enabled,setEnabled]=useState(true);const[minutes,setMinutes]=useState(60);useEffect(()=>{void getScreenTime().then(s=>{setEnabled(s.enabled);setMinutes(s.minutes);});},[]);const update=async(e:boolean,m=minutes)=>{setEnabled(e);setMinutes(m);await saveScreenTime({enabled:e,minutes:m});};return <View><TouchableOpacity onPress={onBack} style={styles.back}><SuperIcon name="arrow-back" size={19} color={colors.primary}/><Text style={styles.backText}>Subira</Text></TouchableOpacity><Text style={styles.kicker}>PARENT • WELLBEING</Text><Text style={styles.title}>Igihe cyo gukoresha</Text><Text style={styles.subtitle}>Shyiraho umupaka w’igihe umwana amara kuri UBUREZI buri munsi.</Text><View style={styles.card}><View style={styles.row}><View style={styles.icon}><SuperIcon name="clock" size={23} color={colors.primary}/></View><View style={{flex:1}}><Text style={styles.cardTitle}>Limit y’umunsi</Text><Text style={styles.cardText}>{enabled?`${minutes} min ku munsi`:'Nta limit yashyizweho'}</Text></View><Switch value={enabled} onValueChange={v=>void update(v)}/></View>{enabled&&<><Text style={styles.big}>{minutes} min</Text><View style={styles.choices}>{[30,60,90,120].map(value=><TouchableOpacity key={value} onPress={()=>void update(true,value)} style={[styles.choice,value===minutes&&styles.choiceActive]}><Text style={[styles.choiceText,value===minutes&&styles.choiceTextActive]}>{value} min</Text></TouchableOpacity>)}</View></>}</View><View style={styles.notice}><View style={styles.noticeIcon}><SuperIcon name="shield-checkmark-outline" size={19} color={colors.success}/></View><View style={{flex:1}}><Text style={styles.noticeTitle}>Igenamiterere ry’umuryango</Text><Text style={styles.noticeText}>Igihe gishyirwaho kigamije gufasha umwana kugira gahunda nziza yo kwiga no kuruhuka.</Text></View></View></View>}
+const styles=StyleSheet.create({back:{flexDirection:'row',alignItems:'center',gap:6,marginBottom:19},backText:{color:colors.primary,fontWeight:'800'},kicker:{fontSize:9,color:colors.primary,fontWeight:'900',letterSpacing:1.2},title:{fontSize:28,fontWeight:'900',color:colors.ink,marginTop:3},subtitle:{color:colors.muted,fontSize:12,lineHeight:19,marginTop:5},card:{backgroundColor:colors.surface,borderRadius:radius.xl,padding:18,marginTop:18,borderWidth:1,borderColor:colors.border,...shadow.card},row:{flexDirection:'row',alignItems:'center',gap:11},icon:{width:46,height:46,borderRadius:15,backgroundColor:colors.primarySoft,alignItems:'center',justifyContent:'center'},cardTitle:{fontWeight:'900',fontSize:15,color:colors.ink},cardText:{color:colors.muted,fontSize:11,marginTop:3},big:{fontSize:36,fontWeight:'900',color:colors.primary,textAlign:'center',marginVertical:20},choices:{flexDirection:'row',gap:7},choice:{flex:1,minHeight:43,borderRadius:12,borderWidth:1,borderColor:colors.border,alignItems:'center',justifyContent:'center',paddingHorizontal:3},choiceActive:{backgroundColor:colors.primary,borderColor:colors.primary},choiceText:{fontWeight:'900',color:colors.text,fontSize:10},choiceTextActive:{color:'#FFF'},notice:{backgroundColor:colors.successSoft,borderRadius:18,padding:14,marginTop:12,flexDirection:'row',gap:10,alignItems:'center'},noticeIcon:{width:39,height:39,borderRadius:13,backgroundColor:colors.surface,alignItems:'center',justifyContent:'center'},noticeTitle:{fontWeight:'900',color:'#166534',fontSize:12},noticeText:{color:'#267343',fontSize:10.5,lineHeight:16,marginTop:2}});
