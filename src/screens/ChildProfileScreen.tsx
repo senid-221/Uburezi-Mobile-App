@@ -13,18 +13,15 @@ export default function ChildProfileScreen({ parentId, onBack, onSelect }: { par
   const [name, setName] = useState('');
   const [birthYear, setBirthYear] = useState('');
   const [level, setLevel] = useState<LearningLevel>('kids');
-
   useEffect(() => { getChildren().then((all) => setChildren(all.filter((c) => c.parentId === parentId))); }, [parentId]);
 
   const addChild = async () => {
     const year = Number(birthYear);
+    const currentYear = new Date().getFullYear();
     if (!name.trim()) return Alert.alert('Izina rirakenewe', 'Andika izina rikoreshwa muri app.');
-    if (!year || year < 2010 || year > new Date().getFullYear()) return Alert.alert('Umwaka utari wo', 'Andika umwaka w’amavuko ukwiye.');
+    if (!year || year < currentYear - 15 || year > currentYear) return Alert.alert('Umwaka utari wo', 'Shyiramo umwaka w’amavuko w’umwana uri hagati y’imyaka 1–15.');
     const child: ChildProfile = { id: `child_${Date.now()}`, parentId, name: name.trim(), birthYear: year, level, avatar: 'person-circle-outline', createdAt: new Date().toISOString() };
-    const all = await getChildren();
-    await saveChildren([...all, child]);
-    setChildren((current) => [...current, child]);
-    setName(''); setBirthYear('');
+    const all = await getChildren(); await saveChildren([...all, child]); setChildren((current) => [...current, child]); setName(''); setBirthYear('');
     Alert.alert('Byakunze', `${child.name} yongewe muri konti y’umubyeyi.`);
   };
 
