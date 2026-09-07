@@ -1,0 +1,14 @@
+{
+  "expo": {
+    "name": "Uburezi",
+    "slug": "uburezi-mobile-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#FFFFFF"
+    },
+    "assetBundlePatterns": ["**/*"]
+  }
+}
