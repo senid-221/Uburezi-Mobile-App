@@ -1,6 +1,5 @@
 -- UBUREZI production database foundation
 -- Supabase Auth stores passwords securely. Never store passwords in public tables.
-
 create extension if not exists pgcrypto;
 
 create table if not exists public.profiles (
@@ -11,13 +10,10 @@ create table if not exists public.profiles (
 );
 
 create table if not exists public.children (
-  id uuid primary key default gen_random_uuid(),
-  parent_id uuid not null references public.profiles(id) on delete cascade,
-  display_name text not null,
-  birth_year int not null check (birth_year between 2010 and 2026),
+  id uuid primary key default gen_random_uuid(), parent_id uuid not null references public.profiles(id) on delete cascade,
+  display_name text not null, birth_year int not null check (birth_year between 2011 and 2025),
   learning_level text not null check (learning_level in ('early','young','kids','teens')),
-  avatar text default 'person-circle-outline',
-  created_at timestamptz not null default now()
+  avatar text default 'person-circle-outline', created_at timestamptz not null default now()
 );
 
 create table if not exists public.learning_progress (
@@ -51,3 +47,21 @@ create policy "parents manage own children" on public.children for all using (au
 create policy "parents manage child progress" on public.learning_progress for all using (exists (select 1 from public.children c where c.id = child_id and c.parent_id = auth.uid())) with check (exists (select 1 from public.children c where c.id = child_id and c.parent_id = auth.uid()));
 create policy "parents manage quiz attempts" on public.quiz_attempts for all using (exists (select 1 from public.children c where c.id = child_id and c.parent_id = auth.uid())) with check (exists (select 1 from public.children c where c.id = child_id and c.parent_id = auth.uid()));
 create policy "parents manage settings" on public.parent_settings for all using (auth.uid() = parent_id) with check (auth.uid() = parent_id);
+
+-- Ensure every new Supabase Auth user receives a profile even when email confirmation delays the client session.
+create or replace function public.handle_new_user() returns trigger
+language plpgsql security definer set search_path = public
+as $$
+begin
+  insert into public.profiles (id, full_name, role)
+  values (new.id, coalesce(new.raw_user_meta_data->>'full_name', split_part(new.email, '@', 1)), coalesce(new.raw_user_meta_data->>'role', 'PARENT'))
+  on conflict (id) do update set full_name = excluded.full_name;
+  insert into public.parent_settings (parent_id) values (new.id) on conflict (parent_id) do nothing;
+  return new;
+end;
+$$;
+
+drop trigger if exists on_auth_user_created on auth.users;
+create trigger on_auth_user_created
+after insert on auth.users
+for each row execute procedure public.handle_new_user();
