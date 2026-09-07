@@ -23,6 +23,7 @@ const levels = [
 ];
 
 type Screen = 'home' | 'lessons' | 'detail' | 'quiz' | 'progress' | 'parent' | 'age' | 'auth' | 'children' | 'time' | 'safety' | 'adult';
+type AuthDestination = 'parent' | 'adult';
 
 export default function App() {
   const [selected, setSelected] = useState<LearningLevel>('kids');
@@ -30,21 +31,23 @@ export default function App() {
   const [parent, setParent] = useState<ParentAccount | null>(null);
   const [selectedChild, setSelectedChild] = useState<ChildProfile | null>(null);
   const [lessonId, setLessonId] = useState('math-counting-1');
+  const [authDestination, setAuthDestination] = useState<AuthDestination>('parent');
   const current = useMemo(() => levels.find((level) => level.id === selected) ?? levels[2], [selected]);
   const goHome = () => setScreen('home');
-  const openParent = () => setScreen(parent ? 'parent' : 'auth');
+  const openParent = () => { setAuthDestination('parent'); setScreen(parent ? 'parent' : 'auth'); };
+  const openAdult = () => { setAuthDestination('adult'); setScreen(parent ? 'adult' : 'auth'); };
 
   if (screen === 'lessons') return <Shell><LessonsScreen onBack={goHome} onQuiz={() => { setLessonId('math-counting-1'); setScreen('quiz'); }} onOpenLesson={(id) => { setLessonId(id); setScreen('detail'); }} /></Shell>;
   if (screen === 'detail') return <Shell><LessonDetailScreen lessonId={lessonId} child={selectedChild} onBack={() => setScreen('lessons')} onStartQuiz={() => setScreen('quiz')} /></Shell>;
   if (screen === 'quiz') return <Shell><QuizScreen lessonId={lessonId} child={selectedChild} onBack={() => setScreen('lessons')} /></Shell>;
   if (screen === 'progress') return <Shell><ProgressScreen onBack={goHome} /></Shell>;
   if (screen === 'age') return <Shell><AgeSelectionScreen selected={selected} onSelect={setSelected} onContinue={goHome} /></Shell>;
-  if (screen === 'auth') return <Shell><ParentAuthScreen onBack={goHome} onAuthenticated={(account) => { setParent(account); setScreen('parent'); }} /></Shell>;
+  if (screen === 'auth') return <Shell><ParentAuthScreen onBack={goHome} onAuthenticated={(account) => { setParent(account); setScreen(authDestination === 'adult' ? 'adult' : 'parent'); }} /></Shell>;
   if (screen === 'children') return <Shell><ChildProfileScreen parentId={parent?.id ?? ''} onBack={() => setScreen('parent')} onSelect={(child) => { setSelectedChild(child); setScreen('parent'); }} /></Shell>;
   if (screen === 'time') return <Shell><ScreenTimeScreen onBack={() => setScreen('parent')} /></Shell>;
   if (screen === 'safety') return <Shell><ContentSafetyScreen onBack={() => setScreen('parent')} /></Shell>;
-  if (screen === 'adult') return <Shell><AdultEducationScreen onBack={goHome} /></Shell>;
-  if (screen === 'parent') return <Shell><ParentDashboardScreen onBack={goHome} parent={parent} onLogin={() => setScreen('auth')} onChildren={() => setScreen('children')} onTime={() => setScreen('time')} onSafety={() => setScreen('safety')} onProgress={() => setScreen('progress')} /></Shell>;
+  if (screen === 'adult') return parent ? <Shell><AdultEducationScreen onBack={goHome} /></Shell> : <Shell><ParentAuthScreen onBack={goHome} onAuthenticated={(account) => { setParent(account); setScreen('adult'); }} /></Shell>;
+  if (screen === 'parent') return <Shell><ParentDashboardScreen onBack={goHome} parent={parent} onLogin={openParent} onChildren={() => setScreen('children')} onTime={() => setScreen('time')} onSafety={() => setScreen('safety')} onProgress={() => setScreen('progress')} /></Shell>;
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -58,7 +61,7 @@ export default function App() {
         <TouchableOpacity style={styles.primaryButton} onPress={() => setScreen('lessons')} activeOpacity={0.85}><Text style={styles.primaryText}>Tangira Kwiga</Text><Ionicons name="arrow-forward" size={21} color="#FFF" /></TouchableOpacity>
         <TouchableOpacity style={styles.secondaryButton} onPress={() => setScreen('progress')} activeOpacity={0.85}><Ionicons name="stats-chart-outline" size={19} color="#2563EB" /><Text style={styles.secondaryText}>Reba Iterambere</Text></TouchableOpacity>
         <TouchableOpacity style={styles.parentButton} onPress={openParent} activeOpacity={0.85}><Ionicons name="shield-checkmark-outline" size={19} color="#2563EB" /><Text style={styles.parentText}>Ahagana ku babyeyi</Text></TouchableOpacity>
-        <TouchableOpacity style={styles.adultButton} onPress={() => setScreen('adult')} activeOpacity={0.85}><Ionicons name="lock-closed-outline" size={18} color="#7C3AED" /><Text style={styles.adultText}>Amasomo y’abakuru 18+</Text></TouchableOpacity>
+        <TouchableOpacity style={styles.adultButton} onPress={openAdult} activeOpacity={0.85}><Ionicons name="lock-closed-outline" size={18} color="#7C3AED" /><Text style={styles.adultText}>Amasomo y’abakuru 18+</Text></TouchableOpacity>
         <Text style={styles.footer}>Ababyeyi bashobora gucunga imyigire, igihe n’umutekano w’ibirimo.</Text>
       </ScrollView>
     </SafeAreaView>
