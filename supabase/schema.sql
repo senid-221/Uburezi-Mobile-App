@@ -14,38 +14,27 @@ create table if not exists public.children (
   id uuid primary key default gen_random_uuid(),
   parent_id uuid not null references public.profiles(id) on delete cascade,
   display_name text not null,
-  birth_year int not null check (birth_year between 2011 and 2026),
+  birth_year int not null check (birth_year between 2010 and 2026),
   learning_level text not null check (learning_level in ('early','young','kids','teens')),
   avatar text default 'person-circle-outline',
   created_at timestamptz not null default now()
 );
 
 create table if not exists public.learning_progress (
-  id uuid primary key default gen_random_uuid(),
-  child_id uuid not null references public.children(id) on delete cascade,
-  lesson_id text not null,
-  progress int not null default 0 check (progress between 0 and 100),
-  completed boolean not null default false,
-  updated_at timestamptz not null default now(),
-  unique(child_id, lesson_id)
+  id uuid primary key default gen_random_uuid(), child_id uuid not null references public.children(id) on delete cascade,
+  lesson_id text not null, progress int not null default 0 check (progress between 0 and 100), completed boolean not null default false,
+  updated_at timestamptz not null default now(), unique(child_id, lesson_id)
 );
 
 create table if not exists public.quiz_attempts (
-  id uuid primary key default gen_random_uuid(),
-  child_id uuid not null references public.children(id) on delete cascade,
-  lesson_id text not null,
-  score int not null check (score >= 0),
-  total int not null check (total > 0),
-  completed_at timestamptz not null default now()
+  id uuid primary key default gen_random_uuid(), child_id uuid not null references public.children(id) on delete cascade,
+  lesson_id text not null, score int not null check (score >= 0), total int not null check (total > 0), completed_at timestamptz not null default now()
 );
 
 create table if not exists public.parent_settings (
   parent_id uuid primary key references public.profiles(id) on delete cascade,
-  screen_time_enabled boolean not null default true,
-  screen_time_minutes int not null default 60 check (screen_time_minutes in (30,60,90,120)),
-  content_filter boolean not null default true,
-  child_messaging boolean not null default false,
-  notifications_enabled boolean not null default true,
+  screen_time_enabled boolean not null default true, screen_time_minutes int not null default 60 check (screen_time_minutes in (30,60,90,120)),
+  content_filter boolean not null default true, child_messaging boolean not null default false, notifications_enabled boolean not null default true,
   updated_at timestamptz not null default now()
 );
 
