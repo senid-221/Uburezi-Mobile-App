@@ -1,33 +1,25 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import SuperIcon from '../components/SuperIcon';
 import type { ParentAccount } from '../types/models';
 import { signOutParent } from '../services/auth';
+import { colors, radius, shadow } from '../theme';
 
 const items = [
-  { icon: 'people-outline' as const, title: 'Abana banjye', text: 'Kora no gucunga child profiles.', action: 'children' },
-  { icon: 'stats-chart-outline' as const, title: 'Imyigire', text: 'Reba amasomo n’aho umwana ageze.', action: 'progress' },
-  { icon: 'time-outline' as const, title: 'Igihe', text: 'Genzura igihe porogaramu ikoreshwa.', action: 'time' },
-  { icon: 'shield-checkmark-outline' as const, title: 'Umutekano', text: 'Genzura ibyo umwana yemerewe kubona.', action: 'safety' },
-];
+  { icon: 'people-outline', title: 'Abana banjye', text: 'Kora no gucunga child profiles.', action: 'children' },
+  { icon: 'stats-chart-outline', title: 'Imyigire', text: 'Reba amasomo n’aho umwana ageze.', action: 'progress' },
+  { icon: 'time-outline', title: 'Igihe', text: 'Genzura igihe porogaramu ikoreshwa.', action: 'time' },
+  { icon: 'shield-checkmark-outline', title: 'Umutekano', text: 'Genzura ibyo umwana yemerewe kubona.', action: 'safety' },
+] as const;
 
-type Props = { onBack: () => void; parent: ParentAccount | null; onLogin: () => void; onChildren: () => void; onTime: () => void; onSafety: () => void; onProgress: () => void };
-
-export default function ParentDashboardScreen({ onBack, parent, onLogin, onChildren, onTime, onSafety, onProgress }: Props) {
-  const logout = async () => { await signOutParent(); onBack(); };
-  const open = (action: string) => {
-    if (!parent) { onLogin(); return; }
-    if (action === 'children') onChildren(); else if (action === 'time') onTime(); else if (action === 'safety') onSafety(); else onProgress();
-  };
-
-  return <View>
-    <TouchableOpacity onPress={onBack} style={styles.back} activeOpacity={0.8}><Ionicons name="arrow-back" size={20} color="#2563EB" /><Text style={styles.backText}>Subira</Text></TouchableOpacity>
-    <Text style={styles.title}>Dashboard y’umubyeyi</Text>
-    <Text style={styles.subtitle}>Cunga imyigire n’umutekano w’umwana ahantu hamwe.</Text>
-    {!parent ? <TouchableOpacity style={styles.login} onPress={onLogin} activeOpacity={0.85}><Ionicons name="log-in-outline" size={21} color="#FFF" /><Text style={styles.loginText}>Injira nka Parent</Text></TouchableOpacity> : <View style={styles.account}><View style={styles.accountIcon}><Ionicons name="person" size={22} color="#2563EB" /></View><View style={{ flex: 1 }}><Text style={styles.accountName}>{parent.name}</Text><Text style={styles.accountEmail}>{parent.email}</Text></View><TouchableOpacity onPress={() => void logout} activeOpacity={0.8}><Text style={styles.logout}>Sohoka</Text></TouchableOpacity></View>}
-    <View style={styles.notice}><Ionicons name="information-circle-outline" size={23} color="#2563EB" /><Text style={styles.noticeText}>Konti y’umwana ikorwa kandi igacungwa n’umubyeyi. Nta public chat y’abana iri muri app.</Text></View>
-    {items.map((item) => <TouchableOpacity key={item.title} style={[styles.card, !parent && styles.cardLocked]} activeOpacity={0.85} onPress={() => open(item.action)}><View style={styles.icon}><Ionicons name={item.icon} size={23} color="#2563EB" /></View><View style={styles.copy}><Text style={styles.cardTitle}>{item.title}</Text><Text style={styles.cardText}>{item.text}</Text></View>{!parent && <Ionicons name="lock-closed-outline" size={17} color="#94A3B8" />}{parent && <Ionicons name="chevron-forward" size={20} color="#94A3B8" />}</TouchableOpacity>)}
-  </View>;
+type Props = { onBack:()=>void; parent:ParentAccount|null; onLogin:()=>void; onChildren:()=>void; onTime:()=>void; onSafety:()=>void; onProgress:()=>void };
+export default function ParentDashboardScreen({onBack,parent,onLogin,onChildren,onTime,onSafety,onProgress}:Props){
+ const logout=async()=>{await signOutParent();onBack();}; const open=(a:string)=>a==='children'?onChildren:a==='time'?onTime:a==='safety'?onSafety:onProgress;
+ return <View><TouchableOpacity onPress={onBack} style={styles.back}><SuperIcon name="arrow-back" size={19} color={colors.primary}/><Text style={styles.backText}>Subira</Text></TouchableOpacity><View style={styles.header}><View><Text style={styles.kicker}>UBUREZI • PARENT</Text><Text style={styles.title}>Dashboard y’umubyeyi</Text><Text style={styles.subtitle}>Cunga imyigire n’umutekano ahantu hamwe.</Text></View><View style={styles.headerIcon}><SuperIcon name="shield-checkmark-outline" size={25} color={colors.primary}/></View></View>
+ {!parent?<TouchableOpacity style={styles.login} onPress={onLogin}><SuperIcon name="log-in-outline" size={20} color="#FFF"/><Text style={styles.loginText}>Injira nka Parent</Text><SuperIcon name="arrow-forward" size={18} color="#FFF"/></TouchableOpacity>:<View style={styles.account}><View style={styles.accountIcon}><SuperIcon name="person" size={21} color={colors.primary}/></View><View style={{flex:1}}><Text style={styles.accountName}>{parent.name}</Text><Text style={styles.accountEmail}>{parent.email}</Text></View><TouchableOpacity onPress={()=>void logout()}><Text style={styles.logout}>Sohoka</Text></TouchableOpacity></View>}
+ <View style={styles.notice}><SuperIcon name="shield-checkmark-outline" size={21} color={colors.primary}/><Text style={styles.noticeText}>Konti y’umwana icungwa n’umubyeyi. Public chat y’abana ntabwo iboneka.</Text></View>
+ {items.map(item=><TouchableOpacity key={item.title} style={styles.card} activeOpacity={0.85} onPress={()=>open(item.action)}><View style={styles.icon}><SuperIcon name={item.icon} size={22} color={colors.primary}/></View><View style={styles.copy}><Text style={styles.cardTitle}>{item.title}</Text><Text style={styles.cardText}>{item.text}</Text></View><SuperIcon name="chevron-forward" size={19} color={colors.muted}/></TouchableOpacity>)}
+ <View style={styles.privacy}><SuperIcon name="lock-closed-outline" size={16} color={colors.success}/><Text style={styles.privacyText}>Data y’umwana igomba kuba nke kandi ikagengwa n’umubyeyi.</Text></View>
+ </View>;
 }
-
-const styles = StyleSheet.create({ back: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 18 }, backText: { color: '#2563EB', fontWeight: '700' }, title: { fontSize: 26, fontWeight: '800', color: '#0F172A' }, subtitle: { color: '#64748B', fontSize: 14, lineHeight: 21, marginTop: 7, marginBottom: 18 }, login: { height: 52, borderRadius: 15, backgroundColor: '#2563EB', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: 13 }, loginText: { color: '#FFF', fontWeight: '800' }, account: { backgroundColor: '#FFF', borderRadius: 18, padding: 13, flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 13, borderWidth: 1, borderColor: '#E2E8F0' }, accountIcon: { width: 44, height: 44, borderRadius: 14, backgroundColor: '#DBEAFE', alignItems: 'center', justifyContent: 'center' }, accountName: { fontWeight: '800', color: '#0F172A' }, accountEmail: { fontSize: 12, color: '#64748B', marginTop: 3 }, logout: { color: '#DC2626', fontWeight: '800', fontSize: 12 }, notice: { flexDirection: 'row', gap: 10, backgroundColor: '#EFF6FF', borderRadius: 16, padding: 14, marginBottom: 16 }, noticeText: { flex: 1, color: '#1E40AF', lineHeight: 20, fontSize: 13 }, card: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#FFF', borderRadius: 18, padding: 15, marginBottom: 12, borderWidth: 1, borderColor: '#E2E8F0' }, cardLocked: { opacity: 0.82 }, icon: { width: 45, height: 45, borderRadius: 14, backgroundColor: '#EFF6FF', alignItems: 'center', justifyContent: 'center' }, copy: { flex: 1, marginLeft: 12 }, cardTitle: { fontWeight: '800', fontSize: 15, color: '#0F172A' }, cardText: { color: '#64748B', fontSize: 12, lineHeight: 18, marginTop: 3 } });
+const styles=StyleSheet.create({back:{flexDirection:'row',alignItems:'center',gap:6,marginBottom:19},backText:{color:colors.primary,fontWeight:'800'},header:{flexDirection:'row',justifyContent:'space-between',alignItems:'center'},kicker:{fontSize:9,color:colors.primary,fontWeight:'900',letterSpacing:1.2},title:{fontSize:25,fontWeight:'900',color:colors.ink,marginTop:3},subtitle:{color:colors.muted,fontSize:11.5,lineHeight:18,marginTop:4,maxWidth:270},headerIcon:{width:52,height:52,borderRadius:17,backgroundColor:colors.primarySoft,alignItems:'center',justifyContent:'center'},login:{height:54,borderRadius:17,backgroundColor:colors.primary,flexDirection:'row',alignItems:'center',justifyContent:'center',gap:9,marginTop:18},loginText:{color:'#FFF',fontWeight:'900',flex:1},account:{backgroundColor:colors.surface,borderRadius:18,padding:13,flexDirection:'row',alignItems:'center',gap:10,marginTop:18,borderWidth:1,borderColor:colors.border,...shadow.card},accountIcon:{width:45,height:45,borderRadius:14,backgroundColor:colors.primarySoft,alignItems:'center',justifyContent:'center'},accountName:{fontWeight:'900',color:colors.ink},accountEmail:{fontSize:10.5,color:colors.muted,marginTop:3},logout:{color:'#DC2626',fontWeight:'900',fontSize:11},notice:{flexDirection:'row',gap:9,backgroundColor:colors.primarySoft,borderRadius:16,padding:13,marginTop:13,marginBottom:15},noticeText:{flex:1,color:'#1E40AF',lineHeight:18,fontSize:11.5},card:{flexDirection:'row',alignItems:'center',backgroundColor:colors.surface,borderRadius:18,padding:14,marginBottom:10,borderWidth:1,borderColor:colors.border,...shadow.card},icon:{width:45,height:45,borderRadius:14,backgroundColor:colors.primarySoft,alignItems:'center',justifyContent:'center'},copy:{flex:1,marginLeft:11},cardTitle:{fontWeight:'900',fontSize:14,color:colors.ink},cardText:{color:colors.muted,fontSize:10.5,lineHeight:16,marginTop:3},privacy:{marginTop:5,backgroundColor:colors.successSoft,borderRadius:15,padding:11,flexDirection:'row',gap:7,alignItems:'center'},privacyText:{flex:1,color:'#267343',fontSize:9.5,lineHeight:14}});
