@@ -1,18 +1,18 @@
 import React from 'react';
 import type { LucideIcon } from 'lucide-react-native';
 import {
-  ArrowLeft, ArrowRight, BarChart3, BookOpen, Brain, Calculator, Check, CheckCircle2,
+  AlertCircle, ArrowLeft, ArrowRight, BarChart3, BookOpen, Brain, Calculator, Check, CheckCircle2,
   ChevronRight, CircleHelp, Clock3, GraduationCap, HeartPulse, Home, Laptop, Leaf,
-  Lightbulb, LockKeyhole, MessageCircle, Plus, Search, Settings2, ShieldCheck,
+  Lightbulb, LoaderCircle, LockKeyhole, MessageCircle, Plus, RefreshCw, Search, Settings2, ShieldCheck,
   Sparkles, Trophy, UserRound, UsersRound, X, XCircle, Languages, Globe2, PlayCircle,
 } from 'lucide-react-native';
 
 const icons = {
-  arrowLeft: ArrowLeft, arrowRight: ArrowRight, chart: BarChart3, book: BookOpen,
+  alertCircle: AlertCircle, arrowLeft: ArrowLeft, arrowRight: ArrowRight, chart: BarChart3, book: BookOpen,
   brain: Brain, calculator: Calculator, check: Check, checkCircle: CheckCircle2,
   chevron: ChevronRight, quiz: CircleHelp, clock: Clock3, graduation: GraduationCap,
   heart: HeartPulse, home: Home, laptop: Laptop, leaf: Leaf, bulb: Lightbulb,
-  lock: LockKeyhole, message: MessageCircle, plus: Plus, search: Search,
+  lock: LockKeyhole, message: MessageCircle, plus: Plus, refresh: RefreshCw, loader: LoaderCircle, search: Search,
   settings: Settings2, shield: ShieldCheck, sparkles: Sparkles, trophy: Trophy,
   user: UserRound, users: UsersRound, close: X, closeCircle: XCircle,
   languages: Languages, globe: Globe2, play: PlayCircle,
