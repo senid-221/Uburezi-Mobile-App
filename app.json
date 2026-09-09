@@ -10,7 +10,7 @@
       "backgroundColor": "#FFFFFF"
     },
     "web": {
-      "output": "single",
+      "output": "static",
       "bundler": "metro"
     },
     "assetBundlePatterns": ["**/*"]
